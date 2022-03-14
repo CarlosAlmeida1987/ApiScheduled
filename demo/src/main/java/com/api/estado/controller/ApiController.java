@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.RestTemplate;
 
 import com.api.estado.DTO.ValueDTO;
+import com.api.estado.exceptions.ResourceNotFoundException;
 import com.api.estado.model.Updates;
 import com.api.estado.service.impl.ValueService;
 import com.google.gson.Gson;

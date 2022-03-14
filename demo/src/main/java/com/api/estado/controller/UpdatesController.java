@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.estado.exceptions.ResourceNotFoundException;
 import com.api.estado.model.Value;
 import com.api.estado.service.impl.UpdatesService;
 
@@ -34,24 +35,44 @@ public class UpdatesController {
 	    @CrossOrigin
 	    @GetMapping("/{id}")
 	    public ResponseEntity<Optional<Value>> findById(@PathVariable String id){
+	    	boolean isNumeric = verifyExists(id);
+	    	if(isNumeric) {
+	    		throw new ResourceNotFoundException("Não encontrou a variável Valida: " + id);
+	    	}
 	        return ResponseEntity.status(HttpStatus.OK).body(updatesService.findById(id));
 	    }
 	    
 	    @PostMapping
 	    public ResponseEntity<Value> create(@RequestBody Value updates){
+	    	if(updates == null) 
+	    		throw new ResourceNotFoundException("Não encontrou a variável um Objeto Updates para Inserir");
 	        return ResponseEntity.status(HttpStatus.CREATED).body(updatesService.save(updates));
 	    }
 	    
 	    @PutMapping
 	    public ResponseEntity<Value> update(@RequestBody Value updates){
+	    	if(updates == null) 
+	    		throw new ResourceNotFoundException("Não encontrou a variável um Objeto Updates para Atualizar");
 	        return ResponseEntity.status(HttpStatus.OK).body(updatesService.update(updates));
 	    }
 	    
 	    @CrossOrigin
 	    @DeleteMapping("/{id}")
 	    public ResponseEntity<?> delete(@PathVariable String id){
+	    	if(id == null) 
+	    		throw new ResourceNotFoundException("Não encontrou a variável ID para DELETA");
 	    	updatesService.deleteById(id);
 	        return ResponseEntity.status(HttpStatus.OK).build();
+	    }
+	    
+	    private boolean verifyExists(String id) {
+	    	boolean isNumeric = true;
+	        for (int i = 0; i < id.length(); i++) {
+	            if (!Character.isDigit(id.charAt(i))) {
+	                isNumeric = false;
+	            }
+	        }
+	        return isNumeric;
 	    }
 
 }
